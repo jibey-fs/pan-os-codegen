@@ -62,6 +62,13 @@ spec:
       profiles:
         - type: entry
           xpath: ["devices", "entry"]
+    - name: enable-clustering
+      description: "Enable NGFW clustering. PAN-OS only accepts this when the
+        object is created - it cannot be enabled or disabled afterwards, and a
+        write that omits it REMOVES clustering from the object irrecoverably."
+      type: bool
+      profiles:
+        - xpath: ["settings", "enable-clustering"]
     - name: default-vsys
       description: "Default virtual system"
       type: string
