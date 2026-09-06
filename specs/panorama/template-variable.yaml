@@ -46,6 +46,29 @@ locations:
         - name: "template_stack"
           description: "Specific Panorama Template Stack"
           required: true
+  - name: "template-stack-device"
+    description: "Located on a specific managed device within a template stack."
+    devices:
+      - panorama
+    xpath:
+      path:
+        - "config"
+        - "devices"
+        - "$panorama_device"
+        - "template-stack"
+        - "$template_stack"
+        - "devices"
+        - "$device"
+      vars:
+        - name: "panorama_device"
+          description: "The panorama device."
+          default: "localhost.localdomain"
+        - name: "template_stack"
+          description: "Specific Panorama Template Stack"
+          required: true
+        - name: "device"
+          description: "Serial number of the managed device the value applies to."
+          required: true
 entries:
   - name: name
     description: "The name of the service."
