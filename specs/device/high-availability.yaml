@@ -1,0 +1,673 @@
+name: High Availability
+terraform_provider_config:
+  description: >-
+    High availability (HA) configuration of a firewall pair. group-id,
+    device-priority and device-id are integers in PAN-OS but are modelled as
+    strings, because a Panorama template commonly sets them to a template
+    variable (e.g. $ha-device-priority), which PAN-OS accepts for these three
+    leaves.
+  skip_resource: false
+  skip_datasource: false
+  resource_type: config
+  xml_node: high-availability
+  resource_variants: []
+  suffix: high_availability
+  plural_suffix: ''
+  plural_name: ''
+  plural_description: ''
+  custom_validation: false
+go_sdk_config:
+  skip: false
+  package:
+  - device
+  - high_availability
+panos_xpath:
+  path:
+  - deviceconfig
+  - high-availability
+  vars: []
+locations:
+- name: system
+  xpath:
+    path:
+    - config
+    - devices
+    - $device
+    vars:
+    - name: device
+      description: Device
+      required: false
+      default: localhost.localdomain
+      validators: []
+      type: entry
+  description: System-level configuration
+  devices:
+  - ngfw
+  validators: []
+  required: false
+  read_only: false
+- name: template
+  xpath:
+    path:
+    - config
+    - devices
+    - $panorama_device
+    - template
+    - $template
+    - config
+    - devices
+    - $ngfw_device
+    vars:
+    - name: panorama_device
+      description: Specific Panorama device
+      required: false
+      default: localhost.localdomain
+      validators: []
+      type: entry
+    - name: template
+      description: Specific Panorama template
+      required: true
+      validators: []
+      type: entry
+    - name: ngfw_device
+      description: The NGFW device
+      required: false
+      default: localhost.localdomain
+      validators: []
+      type: entry
+  description: Located in a specific template
+  devices:
+  - panorama
+  validators: []
+  required: false
+  read_only: false
+- name: template-stack
+  xpath:
+    path:
+    - config
+    - devices
+    - $panorama_device
+    - template-stack
+    - $template_stack
+    - config
+    - devices
+    - $ngfw_device
+    vars:
+    - name: panorama_device
+      description: Specific Panorama device
+      required: false
+      default: localhost.localdomain
+      validators: []
+      type: entry
+    - name: template_stack
+      description: Specific Panorama template stack
+      required: true
+      validators: []
+      type: entry
+    - name: ngfw_device
+      description: The NGFW device
+      required: false
+      default: localhost.localdomain
+      validators: []
+      type: entry
+  description: Located in a specific template stack
+  devices:
+  - panorama
+  validators: []
+  required: false
+  read_only: false
+entries: []
+spec:
+  params:
+  - name: enabled
+    type: bool
+    profiles:
+    - xpath: [enabled]
+    description: Enable HA
+  - name: interface
+    type: object
+    profiles:
+    - xpath: [interface]
+    description: HA control and data link interfaces
+    spec:
+      params:
+      - name: ha1
+        type: object
+        profiles:
+        - xpath: [ha1]
+        description: HA1 control link
+        spec:
+          params:
+          - name: port
+            type: string
+            profiles:
+            - xpath: [port]
+            description: Interface name
+          - name: ip-address
+            type: string
+            profiles:
+            - xpath: [ip-address]
+            description: IP address, or a template variable
+          - name: netmask
+            type: string
+            profiles:
+            - xpath: [netmask]
+            description: Netmask
+          - name: gateway
+            type: string
+            profiles:
+            - xpath: [gateway]
+            description: Default gateway
+          - name: encryption
+            type: object
+            profiles:
+            - xpath: [encryption]
+            description: HA1 encryption
+            spec:
+              params:
+              - name: enabled
+                type: bool
+                profiles:
+                - xpath: [enabled]
+                description: Encrypt the HA1 link
+          - name: monitor-hold-time
+            type: int64
+            profiles:
+            - xpath: [monitor-hold-time]
+            description: Wait time (ms) before declaring HA1 down
+      - name: ha1-backup
+        type: object
+        profiles:
+        - xpath: [ha1-backup]
+        description: HA1 backup control link
+        spec:
+          params:
+          - name: port
+            type: string
+            profiles:
+            - xpath: [port]
+            description: Interface name
+          - name: ip-address
+            type: string
+            profiles:
+            - xpath: [ip-address]
+            description: IP address, or a template variable
+          - name: netmask
+            type: string
+            profiles:
+            - xpath: [netmask]
+            description: Netmask
+          - name: gateway
+            type: string
+            profiles:
+            - xpath: [gateway]
+            description: Default gateway
+      - name: ha2
+        type: object
+        profiles:
+        - xpath: [ha2]
+        description: HA2 data link
+        spec:
+          params:
+          - name: port
+            type: string
+            profiles:
+            - xpath: [port]
+            description: Interface name
+          - name: ip-address
+            type: string
+            profiles:
+            - xpath: [ip-address]
+            description: IP address, or a template variable
+          - name: netmask
+            type: string
+            profiles:
+            - xpath: [netmask]
+            description: Netmask
+          - name: gateway
+            type: string
+            profiles:
+            - xpath: [gateway]
+            description: Default gateway
+      - name: ha2-backup
+        type: object
+        profiles:
+        - xpath: [ha2-backup]
+        description: HA2 backup data link
+        spec:
+          params:
+          - name: port
+            type: string
+            profiles:
+            - xpath: [port]
+            description: Interface name
+          - name: ip-address
+            type: string
+            profiles:
+            - xpath: [ip-address]
+            description: IP address, or a template variable
+          - name: netmask
+            type: string
+            profiles:
+            - xpath: [netmask]
+            description: Netmask
+          - name: gateway
+            type: string
+            profiles:
+            - xpath: [gateway]
+            description: Default gateway
+      - name: ha3
+        type: object
+        profiles:
+        - xpath: [ha3]
+        description: HA3 packet-forwarding link (active/active)
+        spec:
+          params:
+          - name: port
+            type: string
+            profiles:
+            - xpath: [port]
+            description: Interface name
+      - name: ha4
+        type: object
+        profiles:
+        - xpath: [ha4]
+        description: HA4 cluster session-sync link
+        spec:
+          params:
+          - name: port
+            type: string
+            profiles:
+            - xpath: [port]
+            description: Interface name
+          - name: ip-address
+            type: string
+            profiles:
+            - xpath: [ip-address]
+            description: IP address, or a template variable
+          - name: netmask
+            type: string
+            profiles:
+            - xpath: [netmask]
+            description: Netmask
+      - name: ha4-backup
+        type: object
+        profiles:
+        - xpath: [ha4-backup]
+        description: HA4 backup cluster session-sync link
+        spec:
+          params:
+          - name: port
+            type: string
+            profiles:
+            - xpath: [port]
+            description: Interface name
+          - name: ip-address
+            type: string
+            profiles:
+            - xpath: [ip-address]
+            description: IP address, or a template variable
+          - name: netmask
+            type: string
+            profiles:
+            - xpath: [netmask]
+            description: Netmask
+  - name: group
+    type: object
+    profiles:
+    - xpath: [group]
+    description: HA group settings
+    spec:
+      params:
+      - name: group-id
+        type: string
+        profiles:
+        - xpath: [group-id]
+        description: >-
+          HA group ID, or a template variable. A string because PAN-OS accepts
+          a template variable here.
+      - name: description
+        type: string
+        profiles:
+        - xpath: [description]
+        description: Description
+      - name: peer-ip
+        type: string
+        profiles:
+        - xpath: [peer-ip]
+        description: Peer HA1 IP address, or a template variable
+      - name: peer-ip-backup
+        type: string
+        profiles:
+        - xpath: [peer-ip-backup]
+        description: Peer HA1 backup IP address, or a template variable
+      - name: configuration-synchronization
+        type: object
+        profiles:
+        - xpath: [configuration-synchronization]
+        description: Configuration synchronization
+        spec:
+          params:
+          - name: enabled
+            type: bool
+            profiles:
+            - xpath: [enabled]
+            description: Synchronize configuration with the peer
+      - name: election-option
+        type: object
+        profiles:
+        - xpath: [election-option]
+        description: Election settings
+        spec:
+          params:
+          - name: device-priority
+            type: string
+            profiles:
+            - xpath: [device-priority]
+            description: >-
+              Device priority (lower wins), or a template variable. A string
+              because PAN-OS accepts a template variable here.
+          - name: preemptive
+            type: bool
+            profiles:
+            - xpath: [preemptive]
+            description: Preempt the active peer when this device has the better priority
+          - name: heartbeat-backup
+            type: bool
+            profiles:
+            - xpath: [heartbeat-backup]
+            description: Send heartbeats over the management port as well
+          - name: timers
+            type: object
+            profiles:
+            - xpath: [timers]
+            description: HA timer profile
+            spec:
+              variants:
+              - name: recommended
+                type: object
+                profiles:
+                - xpath: [recommended]
+                description: Recommended timers
+                spec: {}
+              - name: aggressive
+                type: object
+                profiles:
+                - xpath: [aggressive]
+                description: Aggressive timers
+                spec: {}
+              - name: advanced
+                type: object
+                profiles:
+                - xpath: [advanced]
+                description: Custom timers
+                spec:
+                  params:
+                  - name: promotion-hold-time
+                    type: string
+                    profiles:
+                    - xpath: [promotion-hold-time]
+                    description: Promotion hold time (ms)
+                  - name: hello-interval
+                    type: int64
+                    profiles:
+                    - xpath: [hello-interval]
+                    description: Hello interval (ms)
+                  - name: heartbeat-interval
+                    type: int64
+                    profiles:
+                    - xpath: [heartbeat-interval]
+                    description: Heartbeat interval (ms)
+                  - name: flap-max
+                    type: string
+                    profiles:
+                    - xpath: [flap-max]
+                    description: Max flaps before suspension, infinite or disable
+                  - name: preemption-hold-time
+                    type: int64
+                    profiles:
+                    - xpath: [preemption-hold-time]
+                    description: Preemption hold time (min)
+                  - name: monitor-fail-hold-up-time
+                    type: string
+                    profiles:
+                    - xpath: [monitor-fail-hold-up-time]
+                    description: Monitor fail hold up time (ms)
+                  - name: additional-master-hold-up-time
+                    type: string
+                    profiles:
+                    - xpath: [additional-master-hold-up-time]
+                    description: Additional active hold up time (ms)
+      - name: state-synchronization
+        type: object
+        profiles:
+        - xpath: [state-synchronization]
+        description: HA2 session state synchronization
+        spec:
+          params:
+          - name: enabled
+            type: bool
+            profiles:
+            - xpath: [enabled]
+            description: Synchronize session state with the peer
+          - name: transport
+            type: enum
+            profiles:
+            - xpath: [transport]
+            validators:
+            - type: values
+              spec:
+                values: [ethernet, ip, udp]
+            spec:
+              values:
+              - value: ethernet
+              - value: ip
+              - value: udp
+            description: HA2 transport
+          - name: ha2-keep-alive
+            type: object
+            profiles:
+            - xpath: [ha2-keep-alive]
+            description: HA2 keep-alive
+            spec:
+              params:
+              - name: enabled
+                type: bool
+                profiles:
+                - xpath: [enabled]
+                description: Enable HA2 keep-alive
+              - name: action
+                type: enum
+                profiles:
+                - xpath: [action]
+                validators:
+                - type: values
+                  spec:
+                    values: [log-only, split-datapath]
+                spec:
+                  values:
+                  - value: log-only
+                  - value: split-datapath
+                description: Action when keep-alive fails
+              - name: threshold
+                type: int64
+                profiles:
+                - xpath: [threshold]
+                description: Keep-alive failure threshold (ms)
+      - name: monitoring
+        type: object
+        profiles:
+        - xpath: [monitoring]
+        description: Failure detection
+        spec:
+          params:
+          - name: link-monitoring
+            type: object
+            profiles:
+            - xpath: [link-monitoring]
+            description: Link monitoring
+            spec:
+              params:
+              - name: enabled
+                type: bool
+                profiles:
+                - xpath: [enabled]
+                description: Enable link monitoring
+              - name: failure-condition
+                type: enum
+                profiles:
+                - xpath: [failure-condition]
+                validators:
+                - type: values
+                  spec:
+                    values: [any, all]
+                spec:
+                  values:
+                  - value: any
+                  - value: all
+                description: Fail when any or all link groups fail
+      - name: mode
+        type: object
+        profiles:
+        - xpath: [mode]
+        description: HA mode
+        spec:
+          variants:
+          - name: active-passive
+            type: object
+            profiles:
+            - xpath: [active-passive]
+            description: Active/passive
+            spec:
+              params:
+              - name: passive-link-state
+                type: enum
+                profiles:
+                - xpath: [passive-link-state]
+                validators:
+                - type: values
+                  spec:
+                    values: [auto, shutdown]
+                spec:
+                  values:
+                  - value: auto
+                  - value: shutdown
+                description: Link state of the passive device
+              - name: monitor-fail-hold-down-time
+                type: int64
+                profiles:
+                - xpath: [monitor-fail-hold-down-time]
+                description: Monitor fail hold down time (min)
+          - name: active-active
+            type: object
+            profiles:
+            - xpath: [active-active]
+            description: Active/active
+            spec:
+              params:
+              - name: device-id
+                type: string
+                profiles:
+                - xpath: [device-id]
+                description: >-
+                  Device ID (0 or 1), or a template variable. A string because
+                  PAN-OS accepts a template variable here.
+              - name: tentative-hold-time
+                type: string
+                profiles:
+                - xpath: [tentative-hold-time]
+                description: Tentative hold time (s), or disabled
+              - name: network-configuration
+                type: object
+                profiles:
+                - xpath: [network-configuration]
+                description: Network configuration synchronization
+                spec:
+                  params:
+                  - name: sync
+                    type: object
+                    profiles:
+                    - xpath: [sync]
+                    description: Objects to synchronize
+                    spec:
+                      params:
+                      - name: virtual-router
+                        type: bool
+                        profiles:
+                        - xpath: [virtual-router]
+                        description: Synchronize virtual routers
+                      - name: qos
+                        type: bool
+                        profiles:
+                        - xpath: [qos]
+                        description: Synchronize QoS
+              - name: session-owner-selection
+                type: object
+                profiles:
+                - xpath: [session-owner-selection]
+                description: Session owner selection
+                spec:
+                  variants:
+                  - name: primary-device
+                    type: object
+                    profiles:
+                    - xpath: [primary-device]
+                    description: The active-primary device owns all sessions
+                    spec: {}
+                  - name: first-packet
+                    type: object
+                    profiles:
+                    - xpath: [first-packet]
+                    description: The device that receives the first packet owns the session
+                    spec:
+                      params:
+                      - name: session-setup
+                        type: object
+                        profiles:
+                        - xpath: [session-setup]
+                        description: Session setup
+                        spec:
+                          variants:
+                          - name: primary-device
+                            type: object
+                            profiles:
+                            - xpath: [primary-device]
+                            description: The active-primary device sets up all sessions
+                            spec: {}
+                          - name: first-packet
+                            type: object
+                            profiles:
+                            - xpath: [first-packet]
+                            description: The device that receives the first packet sets up the session
+                            spec: {}
+                          - name: ip-modulo
+                            type: object
+                            profiles:
+                            - xpath: [ip-modulo]
+                            description: Select by parity of the source IP
+                            spec: {}
+                          - name: ip-hash
+                            type: object
+                            profiles:
+                            - xpath: [ip-hash]
+                            description: Select by hash of the IP address
+                            spec:
+                              params:
+                              - name: hash-key
+                                type: enum
+                                profiles:
+                                - xpath: [hash-key]
+                                validators:
+                                - type: values
+                                  spec:
+                                    values: [source, source-and-destination]
+                                spec:
+                                  values:
+                                  - value: source
+                                  - value: source-and-destination
+                                description: Addresses fed to the hash
+                              - name: hash-seed
+                                type: string
+                                profiles:
+                                - xpath: [hash-seed]
+                                description: Hash seed
