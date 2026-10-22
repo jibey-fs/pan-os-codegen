@@ -1,0 +1,69 @@
+name: "Firewall Cluster"
+terraform_provider_config:
+  resource_type: entry
+  suffix: "firewall_cluster"
+go_sdk_config:
+  package:
+    - "panorama"
+    - "firewall_cluster"
+panos_xpath:
+  path:
+    - "cluster"
+locations:
+  - name: "panorama"
+    description: "Located in a specific Panorama."
+    devices:
+      - panorama
+    xpath:
+      path:
+        - "config"
+        - "devices"
+        - "$panorama_device"
+      vars:
+        - name: "panorama_device"
+          description: "The Panorama device."
+          default: "localhost.localdomain"
+entries:
+  - name: name
+    description: "The name of the firewall cluster."
+    validators:
+      - type: length
+        spec:
+          min: 1
+          max: 63
+version: "10.1.0"
+spec:
+  params:
+    - name: cluster-type
+      description: "The cluster type."
+      type: string
+      spec:
+        default: PA
+      profiles:
+        - xpath: ["cluster-type"]
+    - name: devices
+      description: "Cluster members, in order."
+      type: list
+      profiles:
+        - type: entry
+          xpath: ["devices", "entry"]
+      spec:
+        items:
+          type: object
+          spec:
+            params:
+              - name: node-id
+                description: "Cluster node ID of the member."
+                type: int64
+                profiles:
+                  - xpath: ["nodeid"]
+    - name: description
+      description: "The description."
+      type: string
+      validators:
+        - type: length
+          spec:
+            min: 0
+            max: 255
+      profiles:
+        - xpath: ["description"]
