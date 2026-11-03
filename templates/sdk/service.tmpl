@@ -642,7 +642,7 @@ return err
         {{- range $_, $param := $.Spec.SortedOneOf}}
         {{- end}}
         }
-    {{- else}}
+    {{- else if .SupportedVersionRanges}}
         {{- range $version := .SupportedVersionRanges }}
             {{- range $_, $param := $.Spec.SortedParams}}
                 {{- if paramSupportedInVersion $param $version.Minimum}}
@@ -654,6 +654,12 @@ return err
                 {{- end}}
             {{- end}}
             {{- range $_, $param := $.Spec.SortedOneOf}}
+            {{- end}}
+        {{- end}}
+    {{- else}}
+        {{- range $_, $param := $.Spec.SortedParams}}
+            {{- range $_, $xpath := xmlPathSuffixes $param}}
+                deleteSuffixes = append(deleteSuffixes, "{{$xpath}}")
             {{- end}}
         {{- end}}
     {{- end}}
