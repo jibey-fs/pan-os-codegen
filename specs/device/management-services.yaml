@@ -1,0 +1,209 @@
+name: Management Services
+terraform_provider_config:
+  description: Services on the management interface (deviceconfig/system/service)
+  skip_resource: false
+  skip_datasource: false
+  resource_type: config
+  resource_variants: []
+  suffix: management_services
+  xml_node: service
+  plural_suffix: ''
+  plural_name: ''
+  plural_description: ''
+  custom_validation: false
+go_sdk_config:
+  skip: false
+  package:
+  - device
+  - management_services
+panos_xpath:
+  path:
+  - deviceconfig
+  - system
+  - service
+  vars: []
+locations:
+- name: system
+  xpath:
+    path:
+    - config
+    - devices
+    - $device
+    vars:
+    - name: device
+      description: Device
+      required: false
+      default: localhost.localdomain
+      validators: []
+      type: entry
+  description: System-level configuration
+  devices:
+  - panorama
+  - ngfw
+  validators: []
+  required: false
+  read_only: false
+- name: template
+  xpath:
+    path:
+    - config
+    - devices
+    - $panorama_device
+    - template
+    - $template
+    - config
+    - devices
+    - $ngfw_device
+    vars:
+    - name: panorama_device
+      description: Specific Panorama device
+      required: false
+      default: localhost.localdomain
+      validators: []
+      type: entry
+    - name: template
+      description: Specific Panorama template
+      required: true
+      validators: []
+      type: entry
+    - name: ngfw_device
+      description: The NGFW device
+      required: false
+      default: localhost.localdomain
+      validators: []
+      type: entry
+  description: Located in a specific template
+  devices:
+  - panorama
+  validators: []
+  required: false
+  read_only: false
+- name: template-stack
+  xpath:
+    path:
+    - config
+    - devices
+    - $panorama_device
+    - template-stack
+    - $template_stack
+    - config
+    - devices
+    - $ngfw_device
+    vars:
+    - name: panorama_device
+      description: Specific Panorama device
+      required: false
+      default: localhost.localdomain
+      validators: []
+      type: entry
+    - name: template_stack
+      description: Specific Panorama template stack
+      required: true
+      validators: []
+      type: entry
+    - name: ngfw_device
+      description: The NGFW device
+      required: false
+      default: localhost.localdomain
+      validators: []
+      type: entry
+  description: Located in a specific template stack
+  devices:
+  - panorama
+  validators: []
+  required: false
+  read_only: false
+entries: []
+spec:
+  params:
+  - name: disable-http
+    type: bool
+    profiles:
+    - xpath:
+      - disable-http
+    validators: []
+    spec: {}
+    description: Turn off http on the management interface.
+    required: false
+  - name: disable-https
+    type: bool
+    profiles:
+    - xpath:
+      - disable-https
+    validators: []
+    spec: {}
+    description: Turn off https on the management interface.
+    required: false
+  - name: disable-telnet
+    type: bool
+    profiles:
+    - xpath:
+      - disable-telnet
+    validators: []
+    spec: {}
+    description: Turn off telnet on the management interface.
+    required: false
+  - name: disable-ssh
+    type: bool
+    profiles:
+    - xpath:
+      - disable-ssh
+    validators: []
+    spec: {}
+    description: Turn off ssh on the management interface.
+    required: false
+  - name: disable-icmp
+    type: bool
+    profiles:
+    - xpath:
+      - disable-icmp
+    validators: []
+    spec: {}
+    description: Turn off icmp on the management interface.
+    required: false
+  - name: disable-snmp
+    type: bool
+    profiles:
+    - xpath:
+      - disable-snmp
+    validators: []
+    spec: {}
+    description: Turn off snmp on the management interface.
+    required: false
+  - name: disable-http-ocsp
+    type: bool
+    profiles:
+    - xpath:
+      - disable-http-ocsp
+    validators: []
+    spec: {}
+    description: Turn off http-ocsp on the management interface.
+    required: false
+  - name: disable-userid-service
+    type: bool
+    profiles:
+    - xpath:
+      - disable-userid-service
+    validators: []
+    spec: {}
+    description: Turn off userid-service on the management interface.
+    required: false
+  - name: disable-userid-syslog-listener-ssl
+    type: bool
+    profiles:
+    - xpath:
+      - disable-userid-syslog-listener-ssl
+    validators: []
+    spec: {}
+    description: Turn off userid-syslog-listener-ssl on the management interface.
+    required: false
+  - name: disable-userid-syslog-listener-udp
+    type: bool
+    profiles:
+    - xpath:
+      - disable-userid-syslog-listener-udp
+    validators: []
+    spec: {}
+    description: Turn off userid-syslog-listener-udp on the management interface.
+    required: false
+  variants: []

@@ -1,0 +1,169 @@
+name: Device Settings
+terraform_provider_config:
+  description: 'Device settings (deviceconfig/setting): advanced routing, jumbo frames and
+    session rematch. The management child is panos_management_settings.'
+  skip_resource: false
+  skip_datasource: false
+  resource_type: config
+  resource_variants: []
+  suffix: device_settings
+  xml_node: setting
+  plural_suffix: ''
+  plural_name: ''
+  plural_description: ''
+  custom_validation: false
+go_sdk_config:
+  skip: false
+  package:
+  - device
+  - device_settings
+panos_xpath:
+  path:
+  - deviceconfig
+  - setting
+  vars: []
+locations:
+- name: system
+  xpath:
+    path:
+    - config
+    - devices
+    - $device
+    vars:
+    - name: device
+      description: Device
+      required: false
+      default: localhost.localdomain
+      validators: []
+      type: entry
+  description: System-level configuration
+  devices:
+  - panorama
+  - ngfw
+  validators: []
+  required: false
+  read_only: false
+- name: template
+  xpath:
+    path:
+    - config
+    - devices
+    - $panorama_device
+    - template
+    - $template
+    - config
+    - devices
+    - $ngfw_device
+    vars:
+    - name: panorama_device
+      description: Specific Panorama device
+      required: false
+      default: localhost.localdomain
+      validators: []
+      type: entry
+    - name: template
+      description: Specific Panorama template
+      required: true
+      validators: []
+      type: entry
+    - name: ngfw_device
+      description: The NGFW device
+      required: false
+      default: localhost.localdomain
+      validators: []
+      type: entry
+  description: Located in a specific template
+  devices:
+  - panorama
+  validators: []
+  required: false
+  read_only: false
+- name: template-stack
+  xpath:
+    path:
+    - config
+    - devices
+    - $panorama_device
+    - template-stack
+    - $template_stack
+    - config
+    - devices
+    - $ngfw_device
+    vars:
+    - name: panorama_device
+      description: Specific Panorama device
+      required: false
+      default: localhost.localdomain
+      validators: []
+      type: entry
+    - name: template_stack
+      description: Specific Panorama template stack
+      required: true
+      validators: []
+      type: entry
+    - name: ngfw_device
+      description: The NGFW device
+      required: false
+      default: localhost.localdomain
+      validators: []
+      type: entry
+  description: Located in a specific template stack
+  devices:
+  - panorama
+  validators: []
+  required: false
+  read_only: false
+entries: []
+spec:
+  params:
+  - name: advance-routing
+    type: bool
+    profiles:
+    - xpath:
+      - advance-routing
+    validators: []
+    spec: {}
+    description: Use the Advanced Routing Engine (logical routers) instead of legacy virtual
+      routers. Takes effect after a reboot.
+    required: false
+  - name: jumbo-frame
+    type: object
+    profiles:
+    - xpath:
+      - jumbo-frame
+    validators: []
+    spec:
+      params:
+      - name: mtu
+        type: int64
+        profiles:
+        - xpath:
+          - mtu
+        validators: []
+        spec: {}
+        description: Device MTU excluding the Ethernet header.
+        required: false
+      variants: []
+    description: 'Jumbo frames: present enables them.'
+    required: false
+  - name: config-settings
+    type: object
+    profiles:
+    - xpath:
+      - config
+    validators: []
+    spec:
+      params:
+      - name: rematch
+        type: bool
+        profiles:
+        - xpath:
+          - rematch
+        validators: []
+        spec: {}
+        description: Re-match existing sessions against the new security policy on commit.
+        required: false
+      variants: []
+    description: Configuration behaviour.
+    required: false
+  variants: []

@@ -1,0 +1,183 @@
+name: Management Settings
+terraform_provider_config:
+  description: 'Device management settings (deviceconfig/setting/management): High Speed Log
+    Forwarding, the syslog header hostname and admin lockout'
+  skip_resource: false
+  skip_datasource: false
+  resource_type: config
+  resource_variants: []
+  suffix: management_settings
+  xml_node: management
+  plural_suffix: ''
+  plural_name: ''
+  plural_description: ''
+  custom_validation: false
+go_sdk_config:
+  skip: false
+  package:
+  - device
+  - management_settings
+panos_xpath:
+  path:
+  - deviceconfig
+  - setting
+  - management
+  vars: []
+locations:
+- name: system
+  xpath:
+    path:
+    - config
+    - devices
+    - $device
+    vars:
+    - name: device
+      description: Device
+      required: false
+      default: localhost.localdomain
+      validators: []
+      type: entry
+  description: System-level configuration
+  devices:
+  - panorama
+  - ngfw
+  validators: []
+  required: false
+  read_only: false
+- name: template
+  xpath:
+    path:
+    - config
+    - devices
+    - $panorama_device
+    - template
+    - $template
+    - config
+    - devices
+    - $ngfw_device
+    vars:
+    - name: panorama_device
+      description: Specific Panorama device
+      required: false
+      default: localhost.localdomain
+      validators: []
+      type: entry
+    - name: template
+      description: Specific Panorama template
+      required: true
+      validators: []
+      type: entry
+    - name: ngfw_device
+      description: The NGFW device
+      required: false
+      default: localhost.localdomain
+      validators: []
+      type: entry
+  description: Located in a specific template
+  devices:
+  - panorama
+  validators: []
+  required: false
+  read_only: false
+- name: template-stack
+  xpath:
+    path:
+    - config
+    - devices
+    - $panorama_device
+    - template-stack
+    - $template_stack
+    - config
+    - devices
+    - $ngfw_device
+    vars:
+    - name: panorama_device
+      description: Specific Panorama device
+      required: false
+      default: localhost.localdomain
+      validators: []
+      type: entry
+    - name: template_stack
+      description: Specific Panorama template stack
+      required: true
+      validators: []
+      type: entry
+    - name: ngfw_device
+      description: The NGFW device
+      required: false
+      default: localhost.localdomain
+      validators: []
+      type: entry
+  description: Located in a specific template stack
+  devices:
+  - panorama
+  validators: []
+  required: false
+  read_only: false
+entries: []
+spec:
+  params:
+  - name: enable-high-speed-log-forwarding
+    type: bool
+    profiles:
+    - xpath:
+      - enable-high-speed-log-forwarding
+    validators: []
+    spec: {}
+    description: High Speed Log Forwarding (Device > Setup > Management > Logging and Reporting
+      Settings > Log Export and Reporting). Forwards logs from the dataplane instead of the
+      management plane on platforms that support it.
+    required: false
+  - name: hostname-type-in-syslog
+    type: enum
+    profiles:
+    - xpath:
+      - hostname-type-in-syslog
+    validators:
+    - type: values
+      spec:
+        values:
+        - none
+        - FQDN
+        - hostname
+        - ipv4-address
+        - ipv6-address
+    spec:
+      values:
+      - value: none
+      - value: FQDN
+      - value: hostname
+      - value: ipv4-address
+      - value: ipv6-address
+    description: What the firewall puts in the hostname field of the syslog header.
+    required: false
+  - name: admin-lockout
+    type: object
+    profiles:
+    - xpath:
+      - admin-lockout
+    validators: []
+    spec:
+      params:
+      - name: failed-attempts
+        type: int64
+        profiles:
+        - xpath:
+          - failed-attempts
+        validators: []
+        spec: {}
+        description: Failed login attempts that trigger a lockout.
+        required: false
+      - name: lockout-time
+        type: int64
+        profiles:
+        - xpath:
+          - lockout-time
+        validators: []
+        spec: {}
+        description: Minutes an administrator stays locked out.
+        required: false
+      variants: []
+    description: Lock an administrator out after failed logins.
+    required: false
+  variants: []
