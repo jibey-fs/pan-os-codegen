@@ -8,7 +8,10 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-const addressSpecPath = "../../specs/objects/address.yaml"
+const (
+	addressSpecPath = "../../specs/objects/address.yaml"
+	zoneSpecPath    = "../../specs/network/zone.yaml"
+)
 
 func TestUnmarshallAddressSpecFile(t *testing.T) {
 	// given
@@ -87,4 +90,20 @@ xpath_suffix:
 
 	// then
 	assert.Len(t, problems, 2, "Not all expected validation checks failed")
+}
+
+func TestZoneLayer3KeepsEmptyList(t *testing.T) {
+	// given
+	zoneSpec, err := os.ReadFile(zoneSpecPath)
+	assert.Nil(t, err, "failed to read zone spec")
+
+	// when
+	parsed, err := ParseSpec(zoneSpec)
+	assert.Nil(t, err)
+
+	// then
+	network := parsed.Spec.Params["network"]
+	assert.NotNil(t, network, "zone spec should have a network parameter")
+	assert.True(t, network.Spec.OneOf["layer3"].FinalKeepEmptyList(), "network.layer3 should keep an empty list")
+	assert.False(t, network.Spec.OneOf["layer2"].FinalKeepEmptyList(), "network.layer2 should not keep an empty list")
 }

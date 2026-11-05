@@ -70,6 +70,7 @@ type CodegenOverridesTerraform struct {
 	XpathVariable     *string           `yaml:"xpath_variable"`
 	AlsoRequires      *string           `yaml:"also_requires"`
 	TriggerOnChangeOf *string           `yaml:"trigger_on_change_of"`
+	KeepEmptyList     *bool             `yaml:"keep_empty_list"`
 }
 
 type CodegenOverrides struct {

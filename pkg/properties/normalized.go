@@ -254,6 +254,7 @@ type SpecParamTerraformProviderConfig struct {
 	XpathVariable     *string      `json:"xpath_variable" yaml:"xpath_variable"`
 	AlsoRequires      *NameVariant `json:"also_requires" yaml:"also_requires,omitempty"`
 	TriggerOnChangeOf *NameVariant `json:"trigger_on_change_of" yaml:"trigger_on_change_of,omitempty"`
+	KeepEmptyList     *bool        `json:"keep_empty_list" yaml:"keep_empty_list"`
 }
 
 type SpecParamLength struct {
@@ -403,6 +404,15 @@ func (o *SpecParam) FinalRequired() bool {
 func (o *SpecParam) FinalWriteOnly() bool {
 	if o.TerraformProviderConfig != nil && o.TerraformProviderConfig.WriteOnly != nil {
 		return *o.TerraformProviderConfig.WriteOnly
+	}
+	return false
+}
+
+// FinalKeepEmptyList reports whether a known, empty list is sent to the
+// device as an empty element instead of being omitted like a null one.
+func (o *SpecParam) FinalKeepEmptyList() bool {
+	if o.TerraformProviderConfig != nil && o.TerraformProviderConfig.KeepEmptyList != nil {
+		return *o.TerraformProviderConfig.KeepEmptyList
 	}
 	return false
 }
@@ -740,6 +750,7 @@ func schemaParameterToSpecParameter(schemaSpec *parameter.Parameter) (*SpecParam
 			WriteOnly:     schemaSpec.CodegenOverrides.Terraform.WriteOnly,
 			VariantCheck:  variantCheck,
 			XpathVariable: schemaSpec.CodegenOverrides.Terraform.XpathVariable,
+			KeepEmptyList: schemaSpec.CodegenOverrides.Terraform.KeepEmptyList,
 		}
 
 		if schemaSpec.CodegenOverrides.Terraform.AlsoRequires != nil {

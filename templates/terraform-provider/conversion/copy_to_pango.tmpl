@@ -68,6 +68,9 @@
 			diags.AddError("Explicit Error", "Failed something")
 			return diags
 		}
+      {{- if .KeepEmptyList }}
+		{{ $pangoEntries }} = make([]{{ .ItemsType }}, 0, len(object_entries))
+      {{- end }}
 
 		for _, elt := range object_entries {
 			{{ $pangoEntries }} = append({{ $pangoEntries }}, elt.Value{{ .ItemsType | PascalCase }}())

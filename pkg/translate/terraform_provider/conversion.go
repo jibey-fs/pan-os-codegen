@@ -26,6 +26,7 @@ type parameterSpec struct {
 	Type          string
 	Required      bool
 	ItemsType     string
+	KeepEmptyList bool
 	Encryption    *parameterEncryptionSpec
 }
 
@@ -99,6 +100,7 @@ func renderSpecsForParams(names *NameProvider, schemaTyp properties.SchemaType, 
 			ComplexType:   elt.ComplexType(),
 			Type:          elt.FinalType(),
 			ItemsType:     itemsType,
+			KeepEmptyList: elt.FinalKeepEmptyList(),
 			Encryption:    encryptionSpec,
 		})
 

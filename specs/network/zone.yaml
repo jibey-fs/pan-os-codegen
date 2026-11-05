@@ -302,6 +302,9 @@ spec:
         description: ''
         required: false
         variant_group_id: 0
+        codegen_overrides:
+          terraform:
+            keep_empty_list: true
       - name: tap
         type: list
         profiles:
