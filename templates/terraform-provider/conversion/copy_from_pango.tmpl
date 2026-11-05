@@ -116,6 +116,11 @@ var {{ .TerraformName.LowerCamelCase }}_list types.Set
 			if diags.HasError() {
 				return diags
 			}
+      {{- if .KeepEmptyList }}
+			if obj.{{ .PangoName.CamelCase }} == nil {
+				{{ .TerraformName.LowerCamelCase }}_list = types.{{ $.ListOrSet }}Null(types.{{ .ItemsType | PascalCase }}Type)
+			}
+      {{- end }}
 		}
     {{- end }}
   {{- end }}
